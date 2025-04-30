@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>One Piece Quiz</title>
+  <link rel="icon" href="https://www.freepnglogos.com/uploads/one-piece-logo-design-0.jpg" type="image/png">
+  <style>
+    body {
+      background: url('https://wallpaperbat.com/img/8608240-the-straw-hat-pirates.png') no-repeat center center fixed;
+      background-size: cover;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      font-family: 'Arial', sans-serif;
+      color: white;
+      overflow: hidden;
+    }
+    #quiz-container {
+      background: rgba(0, 0, 0, 0.6);
+      padding: 30px;
+      border-radius: 10px;
+      width: 60%;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
+      text-align: center;
+    }
+    #logo {
+      width: 150px;
+      margin-bottom: 20px;
+    }
+    .question {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+    .answer {
+      background-color: #ff7f50;
+      padding: 10px 20px;
+      margin: 5px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .answer:hover {
+      background-color: #ff6347;
+    }
+    .answer.correct {
+      background-color: #32cd32;
+    }
+    .answer.incorrect {
+      background-color: #ff0000;
+    }
+    #start-btn {
+      background-color: #ff7f50;
+      padding: 15px 30px;
+      border: none;
+      border-radius: 5px;
+      font-size: 18px;
+      cursor: pointer;
+    }
+    #start-btn:hover {
+      background-color: #ff6347;
+    }
+    #result {
+      font-size: 24px;
+      margin-top: 20px;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="quiz-container">
+    <img id="logo" src="https://www.freepnglogos.com/uploads/one-piece-logo-design-0.jpg" alt="One Piece Logo">
+    <h1>One Piece Quiz</h1>
+    <button id="start-btn" onclick="startQuiz()">Start Quiz</button>
+    
+    <div id="quiz" class="hidden">
+      <div id="question-container" class="question"></div>
+      <div id="answer-buttons" class="answer-buttons"></div>
+      <div id="timer" class="timer"></div>
+    </div>
+    
+    <div id="result" class="hidden"></div>
+  </div>
+
+  <script>
+    const questions = [
+      { question: "Who is the captain of the Straw Hat Pirates?", answers: [{ text: "Roronoa Zoro", correct: false }, { text: "Monkey D. Luffy", correct: true }, { text: "Sanji", correct: false }, { text: "Nami", correct: false }] },
+      { question: "What is the name of Luffy's Devil Fruit?", answers: [{ text: "Gomu Gomu no Mi", correct: true }, { text: "Mera Mera no Mi", correct: false }, { text: "Suna Suna no Mi", correct: false }, { text: "Hie Hie no Mi", correct: false }] },
+      { question: "Who is the first person to join Luffy’s crew?", answers: [{ text: "Zoro", correct: true }, { text: "Nami", correct: false }, { text: "Sanji", correct: false }, { text: "Usopp", correct: false }] },
+      { question: "What is the name of the Straw Hat Pirates' ship in the beginning?", answers: [{ text: "Thousand Sunny", correct: false }, { text: "Going Merry", correct: true }, { text: "Merry Go", correct: false }, { text: "Red Force", correct: false }] },
+      { question: "What is Nami’s role on the ship?", answers: [{ text: "Navigator", correct: true }, { text: "Cook", correct: false }, { text: "Doctor", correct: false }, { text: "Musician", correct: false }] },
+      { question: "Who built the Thousand Sunny?", answers: [{ text: "Usopp", correct: false }, { text: "Franky", correct: true }, { text: "Zoro", correct: false }, { text: "Sanji", correct: false }] },
+      { question: "Who is known as the ‘Pirate Hunter’?", answers: [{ text: "Monkey D. Luffy", correct: false }, { text: "Roronoa Zoro", correct: true }, { text: "Tony Tony Chopper", correct: false }, { text: "Usopp", correct: false }] },
+      { question: "Who is the shipwright of the Straw Hat Pirates?", answers: [{ text: "Nami", correct: false }, { text: "Sanji", correct: false }, { text: "Franky", correct: true }, { text: "Brook", correct: false }] },
+      { question: "What is the name of Luffy's father?", answers: [{ text: "Gol D. Roger", correct: false }, { text: "Monkey D. Dragon", correct: true }, { text: "Sabo", correct: false }, { text: "Shanks", correct: false }] },
+      { question: "Which island does the crew visit in the Dressrosa arc?", answers: [{ text: "Skypiea", correct: false }, { text: "Wano", correct: false }, { text: "Dressrosa", correct: true }, { text: "Water 7", correct: false }] },
+      { question: "Which character is known as the ‘Surgeon of Death’?", answers: [{ text: "Luffy", correct: false }, { text: "Chopper", correct: false }, { text: "Law", correct: true }, { text: "Usopp", correct: false }] },
+      { question: "Who is known as ‘Black Leg’?", answers: [{ text: "Sanji", correct: true }, { text: "Zoro", correct: false }, { text: "Luffy", correct: false }, { text: "Ace", correct: false }] },
+      { question: "What is the name of the island where the final battle against Kaido happens?", answers: [{ text: "Onigashima", correct: true }, { text: "Skypiea", correct: false }, { text: "Alabasta", correct: false }, { text: "Wano", correct: false }] },
+      { question: "Who is the current leader of the Revolutionary Army?", answers: [{ text: "Sabo", correct: false }, { text: "Monkey D. Dragon", correct: true }, { text: "Ivankov", correct: false }, { text: "Bartholomew Kuma", correct: false }] },
+      { question: "What is the name of the island where the final battle against Enel happens?", answers: [{ text: "Skypiea", correct: true }, { text: "Dressrosa", correct: false }, { text: "Zou", correct: false }, { text: "Whole Cake Island", correct: false }] },
+      { question: "Who was the previous owner of the Straw Hat Luffy's hat?", answers: [{ text: "Gol D. Roger", correct: true }, { text: "Shanks", correct: false }, { text: "Portgas D. Ace", correct: false }, { text: "Monkey D. Dragon", correct: false }] },
+      { question: "What is the name of Zoro’s sword that he received from the grave of his master?", answers: [{ text: "Enma", correct: false }, { text: "Shusui", correct: true }, { text: "Sandai Kitetsu", correct: false }, { text: "Wado Ichimonji", correct: false }] },
+    ];
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let timer;
+
+    function startQuiz() {
+      document.getElementById("start-btn").classList.add("hidden");
+      document.getElementById("quiz").classList.remove("hidden");
+      showQuestion();
+      startTimer();
+    }
+
+    function startTimer() {
+      let timeLeft = 600; // 10 minutes in seconds
+      timer = setInterval(() => {
+        if (timeLeft <= 0) {
+          clearInterval(timer);
+          showResults();
+        } else {
+          document.getElementById("timer").textContent = `Time Left: ${Math.floor(timeLeft / 60)}:${timeLeft % 60}`;
+          timeLeft--;
+        }
+      }, 1000);
+    }
+
+    function showQuestion() {
+      const currentQuestion = questions[currentQuestionIndex];
+      document.getElementById("question-container").textContent = currentQuestion.question;
+
+      const answerButtons = document.getElementById("answer-buttons");
+      answerButtons.innerHTML = "";
+      currentQuestion.answers.forEach(answer => {
+        const button = document.createElement("button");
+        button.classList.add("answer");
+        button.textContent = answer.text;
+        button.onclick = () => selectAnswer(answer, button);
+        answerButtons.appendChild(button);
+      });
+    }
+
+    function selectAnswer(answer, button) {
+      const allButtons = document.querySelectorAll(".answer");
+      allButtons.forEach(btn => btn.disabled = true);
+
+      if (answer.correct) {
+        button.classList.add("correct");
+        score++;
+      } else {
+        button.classList.add("incorrect");
+      }
+
+      setTimeout(() => {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < questions.length) {
+          showQuestion();
+        } else {
+          clearInterval(timer);
+          showResults();
+        }
+      }, 1000);
+    }
+
+    function showResults() {
+      document.getElementById("quiz").classList.add("hidden");
+      document.getElementById("result").classList.remove("hidden");
+      document.getElementById("result").textContent = `You scored ${score} out of ${questions.length}`;
+    }
+  </script>
+</body>
+</html>
+
